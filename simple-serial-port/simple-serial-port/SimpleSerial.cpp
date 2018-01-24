@@ -46,23 +46,41 @@ SimpleSerial::SimpleSerial(char* com_port, DWORD COM_BAUD_RATE)
 	}
 }
 
-char *SimpleSerial::ReadSerialPort()
+string SimpleSerial::ReadSerialPort()
 {
 	DWORD bytes_read;
-	unsigned int data_received_length = 0;
-	char data_received[] = { 0 };
+	unsigned int data_received_length = 0;	
+	string data_received;	
 
 	ClearCommError(io_handler_, &errors_, &status_);
 
-	if (status_.cbInQue > 0)
-		data_received_length = status_.cbInQue;
-	else
-		return 0;
+	for (size_t i = 0; i < 500; i++)
+	{		
+		if (status_.cbInQue > 0) {
+			data_received_length = status_.cbInQue;
+			cout << data_received_length <<  "\n";
 
-	if (ReadFile(io_handler_, data_received, data_received_length, &bytes_read, NULL))
-		return data_received;
-	else
-		return 0;
+			/*if (data_received_length > 255) {
+				char data_received_long[511] = { 0 };
+
+				if (ReadFile(io_handler_, data_received_long, data_received_length, &bytes_read, NULL)) {
+					data_received_str = data_received_long;
+
+					return data_received_str;
+				}
+				else
+					return "Warning: Too large incoming size. Avoid using large char arrays due to buffer overflows.\n";
+			}*/
+
+			if (ReadFile(io_handler_, (PVOID)data_received.c_str(), data_received_length, &bytes_read, NULL)) {
+				
+				return data_received;
+			}
+			else
+				return "Warning: Failed to receive data.\n";
+		}
+	}
+	//return "Warning: Failed to receive data.\n";
 }
 
 bool SimpleSerial::WriteSerialPort(char *data_sent)

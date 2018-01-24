@@ -4,6 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <string>
+#include <string.h>
+#include <chrono>
+#include <thread>
+
+using namespace std;
 
 class SimpleSerial
 {
@@ -17,7 +23,7 @@ private:
 public:
 	SimpleSerial(char* com_port, DWORD COM_BAUD_RATE);
 
-	char *ReadSerialPort();
+	string ReadSerialPort();
 	bool WriteSerialPort(char *data_sent);
 	bool CloseSerialPort();
 	~SimpleSerial();
