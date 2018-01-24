@@ -92,4 +92,8 @@ bool SimpleSerial::CloseSerialPort()
 
 SimpleSerial::~SimpleSerial()
 {
+	if (connected_) {
+		connected_ = false;
+		CloseHandle(io_handler_);		
+	}
 }
