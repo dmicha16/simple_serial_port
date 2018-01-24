@@ -286,3 +286,9 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
+/simple-serial-port/simple-serial-port.sln
+/simple-serial-port/simple-serial-port/simple-serial-port.vcxproj
+/simple-serial-port/simple-serial-port/simple-serial-port.vcxproj.filters
+/simple-serial-port/simple-serial-port/stdafx.cpp
+/simple-serial-port/simple-serial-port/stdafx.h
+/simple-serial-port/simple-serial-port/targetver.h
