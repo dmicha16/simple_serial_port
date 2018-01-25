@@ -17,8 +17,6 @@ SimpleSerial::SimpleSerial(char* com_port, DWORD COM_BAUD_RATE)
 
 		if (GetLastError() == ERROR_FILE_NOT_FOUND)
 			printf("ERROR: Handle was not attached. Reason: %s not available\n", com_port);
-		else
-			printf("ERROR!!!");
 	}
 	else {
 
@@ -46,48 +44,58 @@ SimpleSerial::SimpleSerial(char* com_port, DWORD COM_BAUD_RATE)
 	}
 }
 
-string SimpleSerial::ReadSerialPort()
+string SimpleSerial::ReadSerialPort(int reply_wait_time, string syntax_type)
 {
 	DWORD bytes_read;
-	char inc_msg[1];
-	char *ptr = &inc_msg[0];
+	char inc_msg[1];	
 	string complete_inc_msg;
+	bool began = false;
 
 	unsigned long start_time = time(nullptr);
 
 	ClearCommError(io_handler_, &errors_, &status_);	
 
-	while ((time(nullptr) - start_time) < 7)
+	while ((time(nullptr) - start_time) < reply_wait_time)
 	{
 		if (status_.cbInQue > 0) {
-			//data_received_length = status_.cbInQue;
 			
-			//cout << data_received_length << "\n";
+			if (ReadFile(io_handler_, inc_msg, 1, &bytes_read, NULL)) {
 
-			/*if (data_received_length > 255) {
-			char data_received_long[511] = { 0 };
+				if (syntax_type == "json") {
+					if (inc_msg[0] == '{' || began) {
+						began = true;
 
-			if (ReadFile(io_handler_, data_received_long, data_received_length, &bytes_read, NULL)) {
-			data_received_str = data_received_long;
+						if (inc_msg[0] == '}')
+							return complete_inc_msg;
 
-			return data_received_str;
-			}
-			else
-			return "Warning: Too large incoming size. Avoid using large char arrays due to buffer overflows.\n";
-			}*/
+						if (inc_msg[0] != '{') {
+							complete_inc_msg.append(inc_msg, 1);
+						}
+					}
+				}
+				else if (syntax_type == "greater_less_than") {
+					if (inc_msg[0] == '<' || began) {
 
-			if (ReadFile(io_handler_, ptr, 1, &bytes_read, NULL)) {
+						began = true;
 
-				complete_inc_msg.append(inc_msg, 1);
-				//cout << complete_inc_msg;
+						if (inc_msg[0] == '>')
+							return complete_inc_msg;
+
+						if (inc_msg[0] != '<') {
+							complete_inc_msg.append(inc_msg, 1);
+						}
+					}
+				}
+				else {					
+					return "No expected delimiter.";
+				}
+				
 			}
 			else
 				return "Warning: Failed to receive data.\n";
 		}
 	}
-	return complete_inc_msg;
-	return "all done!\n";
-	//return "Warning: Failed to receive data.\n";
+	return complete_inc_msg;		
 }
 
 bool SimpleSerial::WriteSerialPort(char *data_sent)

@@ -24,7 +24,7 @@ private:
 public:
 	SimpleSerial(char* com_port, DWORD COM_BAUD_RATE);
 
-	string ReadSerialPort();
+	string ReadSerialPort(int reply_wait_time, string syntax_type);
 	bool WriteSerialPort(char *data_sent);
 	bool CloseSerialPort();
 	~SimpleSerial();
