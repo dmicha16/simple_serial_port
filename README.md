@@ -6,7 +6,7 @@ This was created to allow a simple serial port communication integration into an
 
   - Write to Serial port
   - Read from Serial port
-  - Terminate connection when needed
+  - Close connection when needed
 
 
 ### You can also:
@@ -25,7 +25,36 @@ SimpleSerial Serial(com_port, COM_BAUD_RATE);
 ### Reading from Serial port
 
 ### Writing to Serial port
+Call this function and input your char* that you would like to write. Returns true if writing was successful.
 
+``` c++
+bool is_sent = Serial.WriteSerialPort(to_send);
+
+if (is_sent) {
+    do whatever
+}
+```
+
+It is also easy to send strings, however you will have to create a pointer to your string. Example code:
+
+```c++
+printf("What would you like to send?\n");
+string read_in;
+cin >> read_in;
+
+char *to_send = &read_in[0];
+bool work = Serial.WriteSerialPort(to_send);
+	
+if (is_sent) {
+    do whatever
+}
+```
+
+### Closing Serial port
+Simple. Call this function when you would like to close the Serial port. Returns *true* if successful.
+``` c++
+SimpleSerial::CloseSerialPort()
+```
 ### Creating custom syntax
 The config file is generated locally when the program is run for the first time. To create custom syntax you can either add it manually into the program,
 ``` c++
