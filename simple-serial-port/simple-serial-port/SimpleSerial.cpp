@@ -44,52 +44,63 @@ SimpleSerial::SimpleSerial(char* com_port, DWORD COM_BAUD_RATE)
 	}
 }
 
-string SimpleSerial::ReadSerialPort(int reply_wait_time, string syntax_type)
-{
+void SimpleSerial::CustomSyntax(string syntax_type) {
+
+	ofstream syntaxfile;
+	syntaxfile.open("syntax_config.txt");
+
+	if (syntaxfile) {
+		syntaxfile << "json { }\n";
+		syntaxfile << "greater_less_than < >\n";
+		syntaxfile.close();
+	}		
+
+	ifstream syntaxfile_in("syntax_config.txt");
+	string line;	
+
+	if (syntaxfile_in.is_open()) {
+
+		while (syntaxfile_in) {
+			syntaxfile_in >> syntax_name_ >> front_delimiter_ >> end_delimiter_;
+			getline(syntaxfile_in, line);
+			
+			if (syntax_name_ == syntax_type)
+				break;
+		}
+		syntaxfile.close();
+	}
+	else
+		cout << "no file open";
+}
+
+string SimpleSerial::ReadSerialPort(int reply_wait_time, string syntax_type) {
+
 	DWORD bytes_read;
 	char inc_msg[1];	
 	string complete_inc_msg;
 	bool began = false;
 
+	CustomSyntax(syntax_type);
+
 	unsigned long start_time = time(nullptr);
 
 	ClearCommError(io_handler_, &errors_, &status_);	
 
-	while ((time(nullptr) - start_time) < reply_wait_time)
-	{
+	while ((time(nullptr) - start_time) < reply_wait_time) {
+
 		if (status_.cbInQue > 0) {
 			
 			if (ReadFile(io_handler_, inc_msg, 1, &bytes_read, NULL)) {
 
-				if (syntax_type == "json") {
-					if (inc_msg[0] == '{' || began) {
-						began = true;
+				if (inc_msg[0] == front_delimiter_ || began) {
+					began = true;
 
-						if (inc_msg[0] == '}')
-							return complete_inc_msg;
+					if (inc_msg[0] == end_delimiter_)
+						return complete_inc_msg;
 
-						if (inc_msg[0] != '{') {
-							complete_inc_msg.append(inc_msg, 1);
-						}
-					}
+					if (inc_msg[0] != front_delimiter_)
+						complete_inc_msg.append(inc_msg, 1);
 				}
-				else if (syntax_type == "greater_less_than") {
-					if (inc_msg[0] == '<' || began) {
-
-						began = true;
-
-						if (inc_msg[0] == '>')
-							return complete_inc_msg;
-
-						if (inc_msg[0] != '<') {
-							complete_inc_msg.append(inc_msg, 1);
-						}
-					}
-				}
-				else {					
-					return "No expected delimiter.";
-				}
-				
 			}
 			else
 				return "Warning: Failed to receive data.\n";
