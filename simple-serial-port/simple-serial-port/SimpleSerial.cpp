@@ -48,8 +48,7 @@ void SimpleSerial::CustomSyntax(string syntax_type) {
 
 	ifstream syntaxfile_exist("syntax_config.txt");
 
-	if (!syntaxfile_exist) {
-		OutputDebugStringA("Did i fucking come in here");
+	if (!syntaxfile_exist) {		
 		ofstream syntaxfile;
 		syntaxfile.open("syntax_config.txt");
 
@@ -72,8 +71,7 @@ void SimpleSerial::CustomSyntax(string syntax_type) {
 
 		while (syntaxfile_in) {			
 			syntaxfile_in >> syntax_name_ >> front_delimiter_ >> end_delimiter_;
-			getline(syntaxfile_in, line);
-			OutputDebugStringA("Check file line by line\n");
+			getline(syntaxfile_in, line);			
 			
 			if (syntax_name_ == syntax_type) {
 				found = true;
@@ -112,8 +110,7 @@ string SimpleSerial::ReadSerialPort(int reply_wait_time, string syntax_type) {
 		if (status_.cbInQue > 0) {
 			
 			if (ReadFile(io_handler_, inc_msg, 1, &bytes_read, NULL)) {
-
-				OutputDebugStringA("Reading message char by char\n");
+				
 				if (inc_msg[0] == front_delimiter_ || began) {
 					began = true;
 
