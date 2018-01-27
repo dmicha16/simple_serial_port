@@ -292,3 +292,5 @@ __pycache__/
 /simple-serial-port/simple-serial-port/stdafx.cpp
 /simple-serial-port/simple-serial-port/stdafx.h
 /simple-serial-port/simple-serial-port/targetver.h
+/simple-serial-port/simple-serial-port/simple-serial-port.cpp
+/simple-serial-port/simple-serial-port/simple-serial-port.h

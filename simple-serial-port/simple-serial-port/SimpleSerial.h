@@ -26,8 +26,7 @@ private:
 	char front_delimiter_;
 	char end_delimiter_;
 
-	void CustomSyntax(string syntax_type);
-	bool FileExists(char *file_name);
+	void CustomSyntax(string syntax_type);	
 
 public:
 	SimpleSerial(char* com_port, DWORD COM_BAUD_RATE);
