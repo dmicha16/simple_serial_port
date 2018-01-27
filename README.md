@@ -61,13 +61,27 @@ string read_in;
 cin >> read_in;
 
 char *to_send = &read_in[0];
-bool work = Serial.WriteSerialPort(to_send);
+bool is_sent = Serial.WriteSerialPort(to_send);
 	
 if (is_sent) {
     //do whatever
 }
 ```
 
+WriteSerialPort does not append any delimiters by default. This is done due to the fact some *JSON* constructing libraries append their own delimiters. So if you choose to use a *JSON* library just put your parsed *JSON* into a string and add it as a parameter:
+
+``` C++
+string my_json = "{"name":"John"}";
+
+char *to_send = &my_json[0];
+bool is_sent = Serial.WriteSerialPort(to_send);
+
+if (is_sent) {
+    //do whatever
+}
+```
+
+To check for delimiters on the Ardunio side, I highly recommend using [this](http://forum.arduino.cc/index.php?topic=396450) tutorial, especially, *Example 3 - A more complete system*.
 ### Closing Serial port
 Simple. Call this function when you would like to close the Serial port. Returns *true* if successful.
 ``` c++
@@ -96,3 +110,16 @@ example [ ]
 ```
 
 ### Arduino side
+It is rather simple to send back information with your own delimiters from the Arduino. You'll have to concatonate your message at the first index and at the last one with your delimiters:
+
+``` C++
+String my_message = "test";
+String complete_msg = "{" + my_message + "}";
+```
+
+Afterwards, as mentioned before, you just create a pointer to the first index of your complete message string and write that into the Serial port:
+
+``` C++
+char *to_send = &complete_msg[0];
+Serial.write(to_send);
+```
