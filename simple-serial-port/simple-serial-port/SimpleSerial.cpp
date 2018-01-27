@@ -16,7 +16,7 @@ SimpleSerial::SimpleSerial(char* com_port, DWORD COM_BAUD_RATE)
 	if (io_handler_ == INVALID_HANDLE_VALUE) {
 
 		if (GetLastError() == ERROR_FILE_NOT_FOUND)
-			printf("ERROR: Handle was not attached. Reason: %s not available\n", com_port);
+			printf("Warning: Handle was not attached. Reason: %s not available\n", com_port);
 	}
 	else {
 
@@ -24,7 +24,7 @@ SimpleSerial::SimpleSerial(char* com_port, DWORD COM_BAUD_RATE)
 
 		if (!GetCommState(io_handler_, &dcbSerialParams)) {
 
-			printf("failed to get current serial parameters");
+			printf("Warning: Failed to get current serial params");
 		}
 
 		else {
@@ -35,7 +35,7 @@ SimpleSerial::SimpleSerial(char* com_port, DWORD COM_BAUD_RATE)
 			dcbSerialParams.fDtrControl = DTR_CONTROL_ENABLE;
 
 			if (!SetCommState(io_handler_, &dcbSerialParams))
-				printf("ALERT: could not set Serial port parameters\n");
+				printf("Warning: could not set serial port params\n");
 			else {
 				connected_ = true;
 				PurgeComm(io_handler_, PURGE_RXCLEAR | PURGE_TXCLEAR);				
@@ -46,31 +46,52 @@ SimpleSerial::SimpleSerial(char* com_port, DWORD COM_BAUD_RATE)
 
 void SimpleSerial::CustomSyntax(string syntax_type) {
 
-	ofstream syntaxfile;
-	syntaxfile.open("syntax_config.txt");
+	ifstream syntaxfile_exist("syntax_config.txt");
 
-	if (syntaxfile) {
-		syntaxfile << "json { }\n";
-		syntaxfile << "greater_less_than < >\n";
-		syntaxfile.close();
-	}		
+	if (!syntaxfile_exist) {
+		OutputDebugStringA("Did i fucking come in here");
+		ofstream syntaxfile;
+		syntaxfile.open("syntax_config.txt");
 
-	ifstream syntaxfile_in("syntax_config.txt");
-	string line;	
+		if (syntaxfile) {
+			syntaxfile << "json { }\n";
+			syntaxfile << "greater_less_than < >\n";
+			syntaxfile.close();
+		}
+	}
+
+	syntaxfile_exist.close();
+	
+	ifstream syntaxfile_in;
+	syntaxfile_in.open("syntax_config.txt");
+	
+	string line;
+	bool found = false;	
 
 	if (syntaxfile_in.is_open()) {
 
-		while (syntaxfile_in) {
+		while (syntaxfile_in) {			
 			syntaxfile_in >> syntax_name_ >> front_delimiter_ >> end_delimiter_;
 			getline(syntaxfile_in, line);
+			OutputDebugStringA("Check file line by line\n");
 			
-			if (syntax_name_ == syntax_type)
+			if (syntax_name_ == syntax_type) {
+				found = true;
 				break;
+			}
 		}
-		syntaxfile.close();
+
+		syntaxfile_in.close();
+
+		if (!found) {
+			syntax_name_ = "";
+			front_delimiter_ = ' ';
+			end_delimiter_ = ' ';
+			printf("Warning: Could not find delimiters, may cause problems!\n");
+		}
 	}
 	else
-		cout << "no file open";
+		printf ("Warning: No file open");
 }
 
 string SimpleSerial::ReadSerialPort(int reply_wait_time, string syntax_type) {
@@ -92,6 +113,7 @@ string SimpleSerial::ReadSerialPort(int reply_wait_time, string syntax_type) {
 			
 			if (ReadFile(io_handler_, inc_msg, 1, &bytes_read, NULL)) {
 
+				OutputDebugStringA("Reading message char by char\n");
 				if (inc_msg[0] == front_delimiter_ || began) {
 					began = true;
 
@@ -100,7 +122,7 @@ string SimpleSerial::ReadSerialPort(int reply_wait_time, string syntax_type) {
 
 					if (inc_msg[0] != front_delimiter_)
 						complete_inc_msg.append(inc_msg, 1);
-				}
+				}				
 			}
 			else
 				return "Warning: Failed to receive data.\n";
@@ -111,7 +133,7 @@ string SimpleSerial::ReadSerialPort(int reply_wait_time, string syntax_type) {
 
 bool SimpleSerial::WriteSerialPort(char *data_sent)
 {
-	DWORD bytes_sent;
+	DWORD bytes_sent;	
 
 	unsigned int data_sent_length = strlen(data_sent);
 

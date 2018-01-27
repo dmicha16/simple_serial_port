@@ -26,11 +26,13 @@ private:
 	char front_delimiter_;
 	char end_delimiter_;
 
+	void CustomSyntax(string syntax_type);
+	bool FileExists(char *file_name);
+
 public:
 	SimpleSerial(char* com_port, DWORD COM_BAUD_RATE);
 
-	string ReadSerialPort(int reply_wait_time, string syntax_type);
-	void CustomSyntax(string syntax_type);
+	string ReadSerialPort(int reply_wait_time, string syntax_type);	
 	bool WriteSerialPort(char *data_sent);
 	bool CloseSerialPort();
 	~SimpleSerial();
