@@ -1,8 +1,8 @@
 # Simple serial communication between a Windows C++ application and an Arduino
 
-During a university project which used an Ardunio and a C++ program, we had some issues of establishing a quick and easy serial port communication. This project was then created after the semester to avoid further problems like this.
+During a university project which used an Ardunio and a C++ program, we had some issues establishing a quick and easy serial port communication system. This project was then created, after the semester, to create an easy to use lightweight serial communication library.
 
-This lib allows a simple serial port communication integration into any C++ application that intends to talk to an Ardunio. Reading from Serial port uses common delimiters, such as JSON, which are appended at the beginning and end of each string sent from the Ardunio. Examples are provided further below.
+This library allows a simple-serial-port communication integration into any Windows C++ application that intends to communicate with any Ardunio. Reading from the Serial port uses common delimiters, such as JSONs, which are then concatonated at the beginning and at end of each string sent from the Ardunio. Examples are provided further below.
 
 # Features:
 
@@ -17,7 +17,7 @@ This lib allows a simple serial port communication integration into any C++ appl
   - Add custom delimiters via a local config file
 
 ### Initialization the program
-The program allows you to set the com port and the baud rate through the constructor. To use the baud rate, due to Windows API, a CBR_ must be added, as shown below. The constructor also sets *connected_* to *true* if the connection has been established successfully.
+The program allows you to set the specific COM PORT and the BAUD RATE through the constructor. To properly use the BAUD RATE, due to Windows a API, a CBR_ notation must be added, as shown below. The constructor also sets *connected_* to *true* if the connection has been established successfully.
 ``` c++
 #include "SimpleSerial.h"
 
@@ -31,7 +31,7 @@ if(connected_) {
 ```
 
 ### Reading from Serial port
-To read from the Serial port you must call the *ReadSerialPort* function. It takes two parameters, first an integer which represents, in seconds, the time the function should wait for a reply from the Ardunio, and the name of the syntax type, the delimiters expected from the Arduino, either the two default ones (*JSON* or *greater_less_than*), or the ones you create in the config file. That is described further below.
+To read from the Serial port you must call the *ReadSerialPort* function. It takes two parameters, first an integer which represents the specific time the function should wait for a reply from the Ardunio in seconds, then the name of the syntax or delimiter type expected from the Arduino. It can either be the two default ones (*JSON* or *greater_less_than*), or the ones you create in the config file. Config file is described further below.
 
 ``` c++
 int reply_wait_time = 7;
@@ -39,7 +39,7 @@ string syntax_type = "mine";
 
 string incoming = Serial.ReadSerialPort(reply_wait_time, syntax_type);
 ```
-The received string is then returned without the delimiters. If no delimiters are found in the config file, or the reading has failed for any reason, the function will return an appropriate warning message.
+The received string is then returned without the delimiters. If no delimiters are found in the config file, or the reading has failed for certain reason, the function will return an appropriate warning message.
 
 
 ### Writing to Serial port
@@ -53,7 +53,7 @@ if (is_sent) {
 }
 ```
 
-It is also easy to send strings, however you will have to create a pointer to your string. Example code:
+It is also easy to send strings, however, you will have to declare a pointer to your string. Example code:
 
 ```c++
 printf("What would you like to send?\n");
@@ -68,7 +68,7 @@ if (is_sent) {
 }
 ```
 
-WriteSerialPort does not append any delimiters by default. This is done due to the fact some *JSON* constructing libraries append their own delimiters. So if you choose to use a *JSON* library just put your parsed *JSON* into a string and add it as a parameter:
+WriteSerialPort function does not append any delimiters by default. This is done due to the fact some *JSON* constructing libraries append their own delimiters. So if you choose to use a *JSON* library just put your parsed *JSON* into a string and add it as a parameter:
 
 ``` C++
 string my_json = "{"name":"John"}";
@@ -81,7 +81,8 @@ if (is_sent) {
 }
 ```
 
-To check for delimiters on the Ardunio side, I highly recommend using [this](http://forum.arduino.cc/index.php?topic=396450) tutorial, especially, *Example 3 - A more complete system*.
+To check for delimiters on the Ardunio, I highly recommend using [this](http://forum.arduino.cc/index.php?topic=396450) tutorial, especially, *Example 3 - A more complete system*.
+
 ### Closing Serial port
 Simple. Call this function when you would like to close the Serial port. Returns *true* if successful.
 ``` c++
@@ -92,7 +93,7 @@ if(closed_) {
 }
 ```
 ### Creating custom syntax
-There is an option to create custom delimtier syntax in a local config file. The config file is generated locally when the program is run for the first time. To create your own custom syntax you can either add it manually into the program,
+There is an option to create custom delimtier syntaxes in the local config file. The config file is generated locally when the program is run for the first time. To create your own custom syntaxes you can either add it manually into the program,
 ``` c++
 if (syntaxfile) {
 		syntaxfile << "json { }\n";
