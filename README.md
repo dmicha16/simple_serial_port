@@ -1,6 +1,6 @@
 # Simple serial communication between a Windows C++ application and an Arduino
 
-During a university project which used an Ardunio and a C++ program, we had some issues establishing a quick and easy serial port communication system. This project was then created, after the semester, to create an easy to use lightweight serial communication library.
+During a university project which used an Arduino and a C++ program, we had some issues establishing a quick and easy serial port communication system. This project was then created, after the semester, to create an easy to use lightweight serial communication library.
 
 This library allows a simple-serial-port communication integration into any Windows C++ application that intends to communicate with any Ardunio. Reading from the Serial port uses common delimiters, such as JSONs, which are then concatonated at the beginning and at end of each string sent from the Ardunio. Examples are provided further below.
 
