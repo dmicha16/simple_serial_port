@@ -18,7 +18,6 @@ class SimpleSerial
 
 private:
 	HANDLE io_handler_;
-	bool connected_;
 	COMSTAT status_;
 	DWORD errors_;
 
@@ -35,5 +34,6 @@ public:
 	bool WriteSerialPort(char *data_sent);
 	bool CloseSerialPort();
 	~SimpleSerial();
+	bool connected_;
 };
 
