@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "SimpleSerial.h"
 
-SimpleSerial::SimpleSerial(char* com_port, DWORD COM_BAUD_RATE)
+void SimpleSerial::init(char* com_port, DWORD COM_BAUD_RATE)
 {
 	connected_ = false;
 
