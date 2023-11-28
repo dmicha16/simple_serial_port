@@ -1,17 +1,16 @@
 #include "stdafx.h"
 #include "SimpleSerial.h"
 
-void SimpleSerial::init(char* com_port, DWORD COM_BAUD_RATE)
+SimpleSerial::SimpleSerial(char* com_port, DWORD COM_BAUD_RATE)
 {
 	connected_ = false;
-
 	io_handler_ = CreateFileA(static_cast<LPCSTR>(com_port),
-							GENERIC_READ | GENERIC_WRITE,
-							0,
-							NULL,
-							OPEN_EXISTING,
-							FILE_ATTRIBUTE_NORMAL,
-							NULL);
+		GENERIC_READ | GENERIC_WRITE,
+		0,
+		NULL,
+		OPEN_EXISTING,
+		FILE_ATTRIBUTE_NORMAL,
+		NULL);
 
 	if (io_handler_ == INVALID_HANDLE_VALUE) {
 
@@ -38,7 +37,52 @@ void SimpleSerial::init(char* com_port, DWORD COM_BAUD_RATE)
 				printf("Warning: could not set serial port params\n");
 			else {
 				connected_ = true;
-				PurgeComm(io_handler_, PURGE_RXCLEAR | PURGE_TXCLEAR);				
+				PurgeComm(io_handler_, PURGE_RXCLEAR | PURGE_TXCLEAR);
+			}
+		}
+	}
+}
+
+void SimpleSerial::init(char* com_port, DWORD COM_BAUD_RATE)
+{
+	if (connected_ = true)
+		printf("Warning: could not initialize COM port already in use\n");
+	else {
+		io_handler_ = CreateFileA(static_cast<LPCSTR>(com_port),
+			GENERIC_READ | GENERIC_WRITE,
+			0,
+			NULL,
+			OPEN_EXISTING,
+			FILE_ATTRIBUTE_NORMAL,
+			NULL);
+
+		if (io_handler_ == INVALID_HANDLE_VALUE) {
+
+			if (GetLastError() == ERROR_FILE_NOT_FOUND)
+				printf("Warning: Handle was not attached. Reason: %s not available\n", com_port);
+		}
+		else {
+
+			DCB dcbSerialParams = { 0 };
+
+			if (!GetCommState(io_handler_, &dcbSerialParams)) {
+
+				printf("Warning: Failed to get current serial params");
+			}
+
+			else {
+				dcbSerialParams.BaudRate = COM_BAUD_RATE;
+				dcbSerialParams.ByteSize = 8;
+				dcbSerialParams.StopBits = ONESTOPBIT;
+				dcbSerialParams.Parity = NOPARITY;
+				dcbSerialParams.fDtrControl = DTR_CONTROL_ENABLE;
+
+				if (!SetCommState(io_handler_, &dcbSerialParams))
+					printf("Warning: could not set serial port params\n");
+				else {
+					connected_ = true;
+					PurgeComm(io_handler_, PURGE_RXCLEAR | PURGE_TXCLEAR);
+				}
 			}
 		}
 	}
