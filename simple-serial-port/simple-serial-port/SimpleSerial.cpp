@@ -63,49 +63,48 @@ void SimpleSerial::init(const std::string &com_port, DWORD COM_BAUD_RATE)
     if (connected_ == true)
     {
         std::cout << "Warning: could not initialize COM port already in use\n";
+        return;
+    }
+
+    io_handler_ = CreateFileA(com_port.c_str(),
+                                GENERIC_READ | GENERIC_WRITE,
+                                0,
+                                nullptr,
+                                OPEN_EXISTING,
+                                FILE_ATTRIBUTE_NORMAL,
+                                nullptr);
+
+    if (io_handler_ == INVALID_HANDLE_VALUE)
+    {
+        if (GetLastError() == ERROR_FILE_NOT_FOUND)
+        {
+            std::cout << "Warning: Handle was not attached. Reason: " << com_port << " not available\n";
+        }
     }
     else
     {
-        io_handler_ = CreateFileA(com_port.c_str(),
-                                  GENERIC_READ | GENERIC_WRITE,
-                                  0,
-                                  nullptr,
-                                  OPEN_EXISTING,
-                                  FILE_ATTRIBUTE_NORMAL,
-                                  nullptr);
+        DCB dcbSerialParams = {0};
 
-        if (io_handler_ == INVALID_HANDLE_VALUE)
+        if (!GetCommState(io_handler_, &dcbSerialParams))
         {
-            if (GetLastError() == ERROR_FILE_NOT_FOUND)
-            {
-                std::cout << "Warning: Handle was not attached. Reason: " << com_port << " not available\n";
-            }
+            std::cout << "Warning: Failed to get current serial params\n";
         }
         else
         {
-            DCB dcbSerialParams = {0};
+            dcbSerialParams.BaudRate = COM_BAUD_RATE;
+            dcbSerialParams.ByteSize = 8;
+            dcbSerialParams.StopBits = ONESTOPBIT;
+            dcbSerialParams.Parity = NOPARITY;
+            dcbSerialParams.fDtrControl = DTR_CONTROL_ENABLE;
 
-            if (!GetCommState(io_handler_, &dcbSerialParams))
+            if (!SetCommState(io_handler_, &dcbSerialParams))
             {
-               std::cout << "Warning: Failed to get current serial params\n";
+                std::cout << "Warning: could not set serial port params\n";
             }
             else
             {
-                dcbSerialParams.BaudRate = COM_BAUD_RATE;
-                dcbSerialParams.ByteSize = 8;
-                dcbSerialParams.StopBits = ONESTOPBIT;
-                dcbSerialParams.Parity = NOPARITY;
-                dcbSerialParams.fDtrControl = DTR_CONTROL_ENABLE;
-
-                if (!SetCommState(io_handler_, &dcbSerialParams))
-                {
-                    std::cout << "Warning: could not set serial port params\n";
-                }
-                else
-                {
-                    connected_ = true;
-                    PurgeComm(io_handler_, PURGE_RXCLEAR | PURGE_TXCLEAR);
-                }
+                connected_ = true;
+                PurgeComm(io_handler_, PURGE_RXCLEAR | PURGE_TXCLEAR);
             }
         }
     }
