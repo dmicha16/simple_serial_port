@@ -33,6 +33,6 @@ public:
     bool WriteSerialPort(char *data_sent);
     bool CloseSerialPort();
     ~SimpleSerial();
-    bool connected_;
+    bool connected_ = false;
 };
 

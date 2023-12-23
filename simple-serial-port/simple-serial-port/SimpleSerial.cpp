@@ -5,7 +5,6 @@
 
 SimpleSerial::SimpleSerial(char* com_port, DWORD COM_BAUD_RATE)
 {
-    connected_ = false;
     io_handler_ = CreateFileA(static_cast<LPCSTR>(com_port),
         GENERIC_READ | GENERIC_WRITE,
         0,
