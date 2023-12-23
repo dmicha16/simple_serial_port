@@ -213,7 +213,7 @@ bool SimpleSerial::WriteSerialPort(const std::string &data_sent)
 {
     DWORD bytes_sent;
 
-    unsigned int data_sent_length = data_sent.length();
+    unsigned int data_sent_length = static_cast<unsigned int>(data_sent.length());
 
     if (!WriteFile(io_handler_, data_sent.c_str(), data_sent_length, &bytes_sent, nullptr))
     {
