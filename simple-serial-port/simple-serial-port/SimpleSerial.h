@@ -22,6 +22,7 @@ private:
     std::string syntax_name_;
     char front_delimiter_;
     char end_delimiter_;
+    bool connected_ = false;
 
     void CustomSyntax(std::string syntax_type);	
 
@@ -32,7 +33,7 @@ public:
     std::string ReadSerialPort(int reply_wait_time, std::string syntax_type);	
     bool WriteSerialPort(char *data_sent);
     bool CloseSerialPort();
+    bool IsConnected();
     ~SimpleSerial();
-    bool connected_ = false;
 };
 

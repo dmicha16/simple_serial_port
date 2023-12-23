@@ -198,6 +198,11 @@ bool SimpleSerial::CloseSerialPort()
         return false;
 }
 
+bool SimpleSerial::IsConnected()
+{
+    return connected_;
+}
+
 SimpleSerial::~SimpleSerial()
 {
     if (connected_) {
