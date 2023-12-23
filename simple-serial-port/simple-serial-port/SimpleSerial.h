@@ -28,12 +28,12 @@ private:
 
 public:
     SimpleSerial(char* com_port, DWORD COM_BAUD_RATE);
-    void init(char* com_port, DWORD COM_BAUD_RATE);
+    ~SimpleSerial();
 
+    void init(char* com_port, DWORD COM_BAUD_RATE);
     std::string ReadSerialPort(int reply_wait_time, std::string syntax_type);	
     bool WriteSerialPort(char *data_sent);
     bool CloseSerialPort();
     bool IsConnected();
-    ~SimpleSerial();
 };
 
