@@ -3,6 +3,15 @@
 #endif
 #include "SimpleSerial.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+#include <string.h>
+#include <chrono>
+#include <thread>
+#include <time.h>
+#include <fstream>
+
 SimpleSerial::SimpleSerial(char* com_port, DWORD COM_BAUD_RATE)
 {
     io_handler_ = CreateFileA(static_cast<LPCSTR>(com_port),

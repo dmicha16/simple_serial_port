@@ -1,15 +1,8 @@
 #pragma once
 
 #include <Windows.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <iostream>
 #include <string>
-#include <string.h>
-#include <chrono>
-#include <thread>
-#include <time.h>
-#include <fstream>
+
 
 class SimpleSerial
 {
