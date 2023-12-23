@@ -1,4 +1,6 @@
+#ifdef _MSC_VER
 #include "stdafx.h"
+#endif
 #include "SimpleSerial.h"
 
 SimpleSerial::SimpleSerial(char* com_port, DWORD COM_BAUD_RATE)
