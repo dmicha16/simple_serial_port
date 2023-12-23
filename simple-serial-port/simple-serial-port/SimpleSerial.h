@@ -8,7 +8,6 @@
  */
 class SimpleSerial
 {
-
 private:
     HANDLE io_handler_;
     COMSTAT status_;
