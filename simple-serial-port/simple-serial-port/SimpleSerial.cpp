@@ -88,12 +88,12 @@ void SimpleSerial::init(char* com_port, DWORD COM_BAUD_RATE)
 	}
 }
 
-void SimpleSerial::CustomSyntax(string syntax_type) {
+void SimpleSerial::CustomSyntax(std::string syntax_type) {
 
-	ifstream syntaxfile_exist("syntax_config.txt");
+	std::ifstream syntaxfile_exist("syntax_config.txt");
 
 	if (!syntaxfile_exist) {		
-		ofstream syntaxfile;
+		std::ofstream syntaxfile;
 		syntaxfile.open("syntax_config.txt");
 
 		if (syntaxfile) {
@@ -105,10 +105,10 @@ void SimpleSerial::CustomSyntax(string syntax_type) {
 
 	syntaxfile_exist.close();
 	
-	ifstream syntaxfile_in;
+	std::ifstream syntaxfile_in;
 	syntaxfile_in.open("syntax_config.txt");
 	
-	string line;
+	std::string line;
 	bool found = false;	
 
 	if (syntaxfile_in.is_open()) {
@@ -136,11 +136,11 @@ void SimpleSerial::CustomSyntax(string syntax_type) {
 		printf ("Warning: No file open");
 }
 
-string SimpleSerial::ReadSerialPort(int reply_wait_time, string syntax_type) {
+std::string SimpleSerial::ReadSerialPort(int reply_wait_time, std::string syntax_type) {
 
 	DWORD bytes_read;
 	char inc_msg[1];	
-	string complete_inc_msg;
+	std::string complete_inc_msg;
 	bool began = false;
 
 	CustomSyntax(syntax_type);
