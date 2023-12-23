@@ -12,9 +12,9 @@
 #include <time.h>
 #include <fstream>
 
-SimpleSerial::SimpleSerial(char* com_port, DWORD COM_BAUD_RATE)
+SimpleSerial::SimpleSerial(const std::string& com_port, DWORD COM_BAUD_RATE)
 {
-    io_handler_ = CreateFileA(static_cast<LPCSTR>(com_port),
+    io_handler_ = CreateFileA(com_port.c_str(),
         GENERIC_READ | GENERIC_WRITE,
         0,
         nullptr,
@@ -25,7 +25,9 @@ SimpleSerial::SimpleSerial(char* com_port, DWORD COM_BAUD_RATE)
     if (io_handler_ == INVALID_HANDLE_VALUE) {
 
         if (GetLastError() == ERROR_FILE_NOT_FOUND)
-            printf("Warning: Handle was not attached. Reason: %s not available\n", com_port);
+        {
+            std::cout << "Warning: Handle was not attached. Reason: " << com_port << " not available\n";
+        }
     }
     else {
 
@@ -53,12 +55,15 @@ SimpleSerial::SimpleSerial(char* com_port, DWORD COM_BAUD_RATE)
     }
 }
 
-void SimpleSerial::init(char* com_port, DWORD COM_BAUD_RATE)
+void SimpleSerial::init(const std::string& com_port, DWORD COM_BAUD_RATE)
 {
     if (connected_ == true)
-        printf("Warning: could not initialize COM port already in use\n");
-    else {
-        io_handler_ = CreateFileA(static_cast<LPCSTR>(com_port),
+    {
+        std::cout << "Warning: could not initialize COM port already in use\n";
+    }
+    else
+    {
+        io_handler_ = CreateFileA(com_port.c_str(),
             GENERIC_READ | GENERIC_WRITE,
             0,
             nullptr,
@@ -69,7 +74,9 @@ void SimpleSerial::init(char* com_port, DWORD COM_BAUD_RATE)
         if (io_handler_ == INVALID_HANDLE_VALUE) {
 
             if (GetLastError() == ERROR_FILE_NOT_FOUND)
-                printf("Warning: Handle was not attached. Reason: %s not available\n", com_port);
+            {
+                std::cout << "Warning: Handle was not attached. Reason: " << com_port << " not available\n";
+            }
         }
         else {
 
@@ -98,7 +105,7 @@ void SimpleSerial::init(char* com_port, DWORD COM_BAUD_RATE)
     }
 }
 
-void SimpleSerial::CustomSyntax(std::string syntax_type) {
+void SimpleSerial::CustomSyntax(const std::string&  syntax_type) {
 
     std::ifstream syntaxfile_exist("syntax_config.txt");
 
@@ -182,13 +189,13 @@ std::string SimpleSerial::ReadSerialPort(int reply_wait_time, std::string syntax
     return complete_inc_msg;		
 }
 
-bool SimpleSerial::WriteSerialPort(char *data_sent)
+bool SimpleSerial::WriteSerialPort(const std::string& data_sent)
 {
     DWORD bytes_sent;	
 
-    unsigned int data_sent_length = strlen(data_sent);
+    unsigned int data_sent_length = data_sent.length();
 
-    if (!WriteFile(io_handler_, (void*)data_sent, data_sent_length, &bytes_sent, nullptr)) {
+    if (!WriteFile(io_handler_, data_sent.c_str(), data_sent_length, &bytes_sent, nullptr)) {
         ClearCommError(io_handler_, &errors_, &status_);
         return false;
     }

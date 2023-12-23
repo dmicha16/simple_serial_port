@@ -20,12 +20,12 @@ private:
     void CustomSyntax(std::string syntax_type);	
 
 public:
-    SimpleSerial(char* com_port, DWORD COM_BAUD_RATE);
+    SimpleSerial(const std::string& com_port, DWORD COM_BAUD_RATE);
     ~SimpleSerial();
 
-    void init(char* com_port, DWORD COM_BAUD_RATE);
-    std::string ReadSerialPort(int reply_wait_time, std::string syntax_type);	
-    bool WriteSerialPort(char *data_sent);
+    void init(const std::string& com_port, DWORD COM_BAUD_RATE);
+    std::string ReadSerialPort(int reply_wait_time, const std::string& syntax_type);
+    bool WriteSerialPort(const std::string& data_sent);
     bool CloseSerialPort();
     bool IsConnected();
 };
