@@ -58,6 +58,15 @@ SimpleSerial::SimpleSerial(const std::string &com_port, DWORD COM_BAUD_RATE)
     }
 }
 
+SimpleSerial::~SimpleSerial()
+{
+    if (connected_)
+    {
+        connected_ = false;
+        CloseHandle(io_handler_);
+    }
+}
+
 void SimpleSerial::init(const std::string &com_port, DWORD COM_BAUD_RATE)
 {
     if (connected_ == true)
@@ -242,13 +251,4 @@ bool SimpleSerial::CloseSerialPort()
 bool SimpleSerial::IsConnected() const
 {
     return connected_;
-}
-
-SimpleSerial::~SimpleSerial()
-{
-    if (connected_)
-    {
-        connected_ = false;
-        CloseHandle(io_handler_);
-    }
 }
