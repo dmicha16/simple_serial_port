@@ -55,7 +55,7 @@ SimpleSerial::SimpleSerial(char* com_port, DWORD COM_BAUD_RATE)
 
 void SimpleSerial::init(char* com_port, DWORD COM_BAUD_RATE)
 {
-    if (connected_ = true)
+    if (connected_ == true)
         printf("Warning: could not initialize COM port already in use\n");
     else {
         io_handler_ = CreateFileA(static_cast<LPCSTR>(com_port),
