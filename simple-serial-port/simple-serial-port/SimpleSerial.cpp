@@ -9,10 +9,10 @@ SimpleSerial::SimpleSerial(char* com_port, DWORD COM_BAUD_RATE)
     io_handler_ = CreateFileA(static_cast<LPCSTR>(com_port),
         GENERIC_READ | GENERIC_WRITE,
         0,
-        NULL,
+        nullptr,
         OPEN_EXISTING,
         FILE_ATTRIBUTE_NORMAL,
-        NULL);
+        nullptr);
 
     if (io_handler_ == INVALID_HANDLE_VALUE) {
 
@@ -53,10 +53,10 @@ void SimpleSerial::init(char* com_port, DWORD COM_BAUD_RATE)
         io_handler_ = CreateFileA(static_cast<LPCSTR>(com_port),
             GENERIC_READ | GENERIC_WRITE,
             0,
-            NULL,
+            nullptr,
             OPEN_EXISTING,
             FILE_ATTRIBUTE_NORMAL,
-            NULL);
+            nullptr);
 
         if (io_handler_ == INVALID_HANDLE_VALUE) {
 
@@ -155,7 +155,7 @@ std::string SimpleSerial::ReadSerialPort(int reply_wait_time, std::string syntax
 
         if (status_.cbInQue > 0) {
             
-            if (ReadFile(io_handler_, inc_msg, 1, &bytes_read, NULL)) {
+            if (ReadFile(io_handler_, inc_msg, 1, &bytes_read, nullptr)) {
                 
                 if (inc_msg[0] == front_delimiter_ || began) {
                     began = true;
@@ -180,7 +180,7 @@ bool SimpleSerial::WriteSerialPort(char *data_sent)
 
     unsigned int data_sent_length = strlen(data_sent);
 
-    if (!WriteFile(io_handler_, (void*)data_sent, data_sent_length, &bytes_sent, NULL)) {
+    if (!WriteFile(io_handler_, (void*)data_sent, data_sent_length, &bytes_sent, nullptr)) {
         ClearCommError(io_handler_, &errors_, &status_);
         return false;
     }
