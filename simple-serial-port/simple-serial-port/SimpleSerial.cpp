@@ -35,7 +35,7 @@ SimpleSerial::SimpleSerial(const std::string &com_port, DWORD COM_BAUD_RATE)
 
         if (!GetCommState(io_handler_, &dcbSerialParams))
         {
-            printf("Warning: Failed to get current serial params");
+            std::cout << "Warning: Failed to get current serial params\n";
         }
         else
         {
@@ -47,7 +47,7 @@ SimpleSerial::SimpleSerial(const std::string &com_port, DWORD COM_BAUD_RATE)
 
             if (!SetCommState(io_handler_, &dcbSerialParams))
             {
-                printf("Warning: could not set serial port params\n");
+                std::cout << "Warning: could not set serial port params\n";
             }
             else
             {
@@ -87,7 +87,7 @@ void SimpleSerial::init(const std::string &com_port, DWORD COM_BAUD_RATE)
 
             if (!GetCommState(io_handler_, &dcbSerialParams))
             {
-                printf("Warning: Failed to get current serial params");
+               std::cout << "Warning: Failed to get current serial params\n";
             }
             else
             {
@@ -99,7 +99,7 @@ void SimpleSerial::init(const std::string &com_port, DWORD COM_BAUD_RATE)
 
                 if (!SetCommState(io_handler_, &dcbSerialParams))
                 {
-                    printf("Warning: could not set serial port params\n");
+                    std::cout << "Warning: could not set serial port params\n";
                 }
                 else
                 {
@@ -157,12 +157,12 @@ void SimpleSerial::CustomSyntax(const std::string &syntax_type)
             syntax_name_ = "";
             front_delimiter_ = ' ';
             end_delimiter_ = ' ';
-            printf("Warning: Could not find delimiters, may cause problems!\n");
+            std::cout << "Warning: Could not find delimiters, may cause problems!\n";
         }
     }
     else
     {
-        printf("Warning: No file open");
+        std::cout << "Warning: No file open\n";
     }
 }
 
