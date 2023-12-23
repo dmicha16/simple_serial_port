@@ -12,33 +12,33 @@
 #include <time.h>
 #include <fstream>
 
-SimpleSerial::SimpleSerial(const std::string& com_port, DWORD COM_BAUD_RATE)
+SimpleSerial::SimpleSerial(const std::string &com_port, DWORD COM_BAUD_RATE)
 {
     io_handler_ = CreateFileA(com_port.c_str(),
-        GENERIC_READ | GENERIC_WRITE,
-        0,
-        nullptr,
-        OPEN_EXISTING,
-        FILE_ATTRIBUTE_NORMAL,
-        nullptr);
+                              GENERIC_READ | GENERIC_WRITE,
+                              0,
+                              nullptr,
+                              OPEN_EXISTING,
+                              FILE_ATTRIBUTE_NORMAL,
+                              nullptr);
 
-    if (io_handler_ == INVALID_HANDLE_VALUE) {
-
+    if (io_handler_ == INVALID_HANDLE_VALUE)
+    {
         if (GetLastError() == ERROR_FILE_NOT_FOUND)
         {
             std::cout << "Warning: Handle was not attached. Reason: " << com_port << " not available\n";
         }
     }
-    else {
+    else
+    {
+        DCB dcbSerialParams = {0};
 
-        DCB dcbSerialParams = { 0 };
-
-        if (!GetCommState(io_handler_, &dcbSerialParams)) {
-
+        if (!GetCommState(io_handler_, &dcbSerialParams))
+        {
             printf("Warning: Failed to get current serial params");
         }
-
-        else {
+        else
+        {
             dcbSerialParams.BaudRate = COM_BAUD_RATE;
             dcbSerialParams.ByteSize = 8;
             dcbSerialParams.StopBits = ONESTOPBIT;
@@ -46,8 +46,11 @@ SimpleSerial::SimpleSerial(const std::string& com_port, DWORD COM_BAUD_RATE)
             dcbSerialParams.fDtrControl = DTR_CONTROL_ENABLE;
 
             if (!SetCommState(io_handler_, &dcbSerialParams))
+            {
                 printf("Warning: could not set serial port params\n");
-            else {
+            }
+            else
+            {
                 connected_ = true;
                 PurgeComm(io_handler_, PURGE_RXCLEAR | PURGE_TXCLEAR);
             }
@@ -55,7 +58,7 @@ SimpleSerial::SimpleSerial(const std::string& com_port, DWORD COM_BAUD_RATE)
     }
 }
 
-void SimpleSerial::init(const std::string& com_port, DWORD COM_BAUD_RATE)
+void SimpleSerial::init(const std::string &com_port, DWORD COM_BAUD_RATE)
 {
     if (connected_ == true)
     {
@@ -64,30 +67,30 @@ void SimpleSerial::init(const std::string& com_port, DWORD COM_BAUD_RATE)
     else
     {
         io_handler_ = CreateFileA(com_port.c_str(),
-            GENERIC_READ | GENERIC_WRITE,
-            0,
-            nullptr,
-            OPEN_EXISTING,
-            FILE_ATTRIBUTE_NORMAL,
-            nullptr);
+                                  GENERIC_READ | GENERIC_WRITE,
+                                  0,
+                                  nullptr,
+                                  OPEN_EXISTING,
+                                  FILE_ATTRIBUTE_NORMAL,
+                                  nullptr);
 
-        if (io_handler_ == INVALID_HANDLE_VALUE) {
-
+        if (io_handler_ == INVALID_HANDLE_VALUE)
+        {
             if (GetLastError() == ERROR_FILE_NOT_FOUND)
             {
                 std::cout << "Warning: Handle was not attached. Reason: " << com_port << " not available\n";
             }
         }
-        else {
+        else
+        {
+            DCB dcbSerialParams = {0};
 
-            DCB dcbSerialParams = { 0 };
-
-            if (!GetCommState(io_handler_, &dcbSerialParams)) {
-
+            if (!GetCommState(io_handler_, &dcbSerialParams))
+            {
                 printf("Warning: Failed to get current serial params");
             }
-
-            else {
+            else
+            {
                 dcbSerialParams.BaudRate = COM_BAUD_RATE;
                 dcbSerialParams.ByteSize = 8;
                 dcbSerialParams.StopBits = ONESTOPBIT;
@@ -95,8 +98,11 @@ void SimpleSerial::init(const std::string& com_port, DWORD COM_BAUD_RATE)
                 dcbSerialParams.fDtrControl = DTR_CONTROL_ENABLE;
 
                 if (!SetCommState(io_handler_, &dcbSerialParams))
+                {
                     printf("Warning: could not set serial port params\n");
-                else {
+                }
+                else
+                {
                     connected_ = true;
                     PurgeComm(io_handler_, PURGE_RXCLEAR | PURGE_TXCLEAR);
                 }
@@ -105,15 +111,17 @@ void SimpleSerial::init(const std::string& com_port, DWORD COM_BAUD_RATE)
     }
 }
 
-void SimpleSerial::CustomSyntax(const std::string&  syntax_type) {
-
+void SimpleSerial::CustomSyntax(const std::string &syntax_type)
+{
     std::ifstream syntaxfile_exist("syntax_config.txt");
 
-    if (!syntaxfile_exist) {		
+    if (!syntaxfile_exist)
+    {
         std::ofstream syntaxfile;
         syntaxfile.open("syntax_config.txt");
 
-        if (syntaxfile) {
+        if (syntaxfile)
+        {
             syntaxfile << "json { }\n";
             syntaxfile << "greater_less_than < >\n";
             syntaxfile.close();
@@ -121,20 +129,22 @@ void SimpleSerial::CustomSyntax(const std::string&  syntax_type) {
     }
 
     syntaxfile_exist.close();
-    
+
     std::ifstream syntaxfile_in;
     syntaxfile_in.open("syntax_config.txt");
-    
+
     std::string line;
-    bool found = false;	
+    bool found = false;
 
-    if (syntaxfile_in.is_open()) {
-
-        while (syntaxfile_in) {			
+    if (syntaxfile_in.is_open())
+    {
+        while (syntaxfile_in)
+        {
             syntaxfile_in >> syntax_name_ >> front_delimiter_ >> end_delimiter_;
-            getline(syntaxfile_in, line);			
-            
-            if (syntax_name_ == syntax_type) {
+            getline(syntaxfile_in, line);
+
+            if (syntax_name_ == syntax_type)
+            {
                 found = true;
                 break;
             }
@@ -142,7 +152,8 @@ void SimpleSerial::CustomSyntax(const std::string&  syntax_type) {
 
         syntaxfile_in.close();
 
-        if (!found) {
+        if (!found)
+        {
             syntax_name_ = "";
             front_delimiter_ = ' ';
             end_delimiter_ = ' ';
@@ -150,13 +161,15 @@ void SimpleSerial::CustomSyntax(const std::string&  syntax_type) {
         }
     }
     else
-        printf ("Warning: No file open");
+    {
+        printf("Warning: No file open");
+    }
 }
 
-std::string SimpleSerial::ReadSerialPort(int reply_wait_time, std::string syntax_type) {
-
+std::string SimpleSerial::ReadSerialPort(int reply_wait_time, std::string syntax_type)
+{
     DWORD bytes_read;
-    char inc_msg[1];	
+    char inc_msg[1];
     std::string complete_inc_msg;
     bool began = false;
 
@@ -164,54 +177,67 @@ std::string SimpleSerial::ReadSerialPort(int reply_wait_time, std::string syntax
 
     unsigned long start_time = time(nullptr);
 
-    ClearCommError(io_handler_, &errors_, &status_);	
+    ClearCommError(io_handler_, &errors_, &status_);
 
-    while ((time(nullptr) - start_time) < reply_wait_time) {
-
-        if (status_.cbInQue > 0) {
-            
-            if (ReadFile(io_handler_, inc_msg, 1, &bytes_read, nullptr)) {
-                
-                if (inc_msg[0] == front_delimiter_ || began) {
+    while ((time(nullptr) - start_time) < reply_wait_time)
+    {
+        if (status_.cbInQue > 0)
+        {
+            if (ReadFile(io_handler_, inc_msg, 1, &bytes_read, nullptr))
+            {
+                if (inc_msg[0] == front_delimiter_ || began)
+                {
                     began = true;
 
                     if (inc_msg[0] == end_delimiter_)
+                    {
                         return complete_inc_msg;
+                    }
 
                     if (inc_msg[0] != front_delimiter_)
+                    {
                         complete_inc_msg.append(inc_msg, 1);
-                }				
+                    }
+                }
             }
             else
+            {
                 return "Warning: Failed to receive data.\n";
+            }
         }
     }
-    return complete_inc_msg;		
+    return complete_inc_msg;
 }
 
-bool SimpleSerial::WriteSerialPort(const std::string& data_sent)
+bool SimpleSerial::WriteSerialPort(const std::string &data_sent)
 {
-    DWORD bytes_sent;	
+    DWORD bytes_sent;
 
     unsigned int data_sent_length = data_sent.length();
 
-    if (!WriteFile(io_handler_, data_sent.c_str(), data_sent_length, &bytes_sent, nullptr)) {
+    if (!WriteFile(io_handler_, data_sent.c_str(), data_sent_length, &bytes_sent, nullptr))
+    {
         ClearCommError(io_handler_, &errors_, &status_);
         return false;
     }
     else
+    {
         return true;
+    }
 }
 
 bool SimpleSerial::CloseSerialPort()
 {
-    if (connected_) {
+    if (connected_)
+    {
         connected_ = false;
         CloseHandle(io_handler_);
         return true;
-    }	
+    }
     else
+    {
         return false;
+    }
 }
 
 bool SimpleSerial::IsConnected()
@@ -221,8 +247,9 @@ bool SimpleSerial::IsConnected()
 
 SimpleSerial::~SimpleSerial()
 {
-    if (connected_) {
+    if (connected_)
+    {
         connected_ = false;
-        CloseHandle(io_handler_);		
+        CloseHandle(io_handler_);
     }
 }
