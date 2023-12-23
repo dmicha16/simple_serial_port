@@ -175,7 +175,7 @@ std::string SimpleSerial::ReadSerialPort(int reply_wait_time, std::string syntax
 
     CustomSyntax(syntax_type);
 
-    unsigned long start_time = time(nullptr);
+    time_t start_time = time(nullptr);
 
     ClearCommError(io_handler_, &errors_, &status_);
 
