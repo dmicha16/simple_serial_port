@@ -239,7 +239,7 @@ bool SimpleSerial::CloseSerialPort()
     }
 }
 
-bool SimpleSerial::IsConnected()
+bool SimpleSerial::IsConnected() const
 {
     return connected_;
 }
