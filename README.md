@@ -25,7 +25,7 @@ char com_port[] = "\\\\.\\COM8";
 DWORD COM_BAUD_RATE = CBR_9600;
 SimpleSerial Serial(com_port, COM_BAUD_RATE);
 
-if(connected_) {
+if(Serial.IsConnected()) {
     //do whatever
 }
 ```
