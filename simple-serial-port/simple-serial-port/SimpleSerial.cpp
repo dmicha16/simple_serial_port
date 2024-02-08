@@ -75,7 +75,7 @@ void SimpleSerial::init(const std::string &com_port, DWORD COM_BAUD_RATE)
     }
 }
 
-void SimpleSerial::CustomSyntax(std::string syntax_type)
+void SimpleSerial::CustomSyntax(const std::string& syntax_type)
 {
     std::ifstream syntaxfile_exist("syntax_config.txt");
 
@@ -204,7 +204,7 @@ bool SimpleSerial::CloseSerialPort()
     }
 }
 
-bool SimpleSerial::IsConnected() 
+bool SimpleSerial::IsConnected() const
 {
-    return connected_;
+    return this->connected_;
 }
