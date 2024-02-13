@@ -1,6 +1,3 @@
-#ifdef _MSC_VER
-#include "stdafx.h"
-#endif
 #include "SimpleSerial.h"
 
 #include <stdio.h>
@@ -14,48 +11,7 @@
 
 SimpleSerial::SimpleSerial(const std::string &com_port, DWORD COM_BAUD_RATE)
 {
-    io_handler_ = CreateFileA(com_port.c_str(),
-                              GENERIC_READ | GENERIC_WRITE,
-                              0,
-                              nullptr,
-                              OPEN_EXISTING,
-                              FILE_ATTRIBUTE_NORMAL,
-                              nullptr);
-
-    if (io_handler_ == INVALID_HANDLE_VALUE)
-    {
-        if (GetLastError() == ERROR_FILE_NOT_FOUND)
-        {
-            std::cout << "Warning: Handle was not attached. Reason: " << com_port << " not available\n";
-        }
-    }
-    else
-    {
-        DCB dcbSerialParams = {0};
-
-        if (!GetCommState(io_handler_, &dcbSerialParams))
-        {
-            std::cout << "Warning: Failed to get current serial params\n";
-        }
-        else
-        {
-            dcbSerialParams.BaudRate = COM_BAUD_RATE;
-            dcbSerialParams.ByteSize = 8;
-            dcbSerialParams.StopBits = ONESTOPBIT;
-            dcbSerialParams.Parity = NOPARITY;
-            dcbSerialParams.fDtrControl = DTR_CONTROL_ENABLE;
-
-            if (!SetCommState(io_handler_, &dcbSerialParams))
-            {
-                std::cout << "Warning: could not set serial port params\n";
-            }
-            else
-            {
-                connected_ = true;
-                PurgeComm(io_handler_, PURGE_RXCLEAR | PURGE_TXCLEAR);
-            }
-        }
-    }
+    this->init(com_port, COM_BAUD_RATE);
 }
 
 SimpleSerial::~SimpleSerial()
@@ -119,7 +75,7 @@ void SimpleSerial::init(const std::string &com_port, DWORD COM_BAUD_RATE)
     }
 }
 
-void SimpleSerial::CustomSyntax(const std::string &syntax_type)
+void SimpleSerial::CustomSyntax(const std::string& syntax_type)
 {
     std::ifstream syntaxfile_exist("syntax_config.txt");
 
@@ -174,7 +130,7 @@ void SimpleSerial::CustomSyntax(const std::string &syntax_type)
     }
 }
 
-std::string SimpleSerial::ReadSerialPort(int reply_wait_time, std::string syntax_type)
+std::string SimpleSerial::ReadSerialPort(int reply_wait_time, const std::string& syntax_type)
 {
     DWORD bytes_read;
     char inc_msg[1];
@@ -250,5 +206,5 @@ bool SimpleSerial::CloseSerialPort()
 
 bool SimpleSerial::IsConnected() const
 {
-    return connected_;
+    return this->connected_;
 }

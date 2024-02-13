@@ -18,7 +18,7 @@ private:
     char end_delimiter_;
     bool connected_ = false;
 
-    void CustomSyntax(std::string syntax_type);	
+    void CustomSyntax(const std::string& syntax_type);	
 
 public:
     /**
@@ -71,6 +71,6 @@ public:
      * @return true - if we are connected to the serial port;
      * @return false - if we are not connected to the serial port;
      */
-    bool IsConnected();
+    bool IsConnected() const;
 };
 
